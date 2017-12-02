@@ -9,7 +9,9 @@
 
 class DBH {
 
-	private $conn;
+	//database password and username filepath outside root folder
+	include 'C:\Users\Peter\Documents\KTH\ApplikationerförInternet\Seminar\Seminar3\login-util\login-util.php'; 
+	private $dbPassword = "root";
 
 	/**
 	*Constucts an instance of DBH and calls the function to set up connection to database
@@ -50,8 +52,13 @@ class DBH {
 	**/
 	public function saveComment($u_uid, $food, $message, $conn){
 		$date = Date::getDate();
-		$sql = "INSERT INTO comments (user_uid, date, message, food) VALUES ('$u_uid', '$date', '$message', '$food')";
-		$result = $conn->query($sql);
+		$sql = $conn->prepare ("INSERT INTO comments (user_uid, date, message, food) VALUES (?, ?, ?, ?)");
+		$sql->bind_param ("ssss", $sql_u_uid, $sql_date, $sql_message, $sql_food);
+		$sql_u_uid = $u_uid;
+		$sql_date = $date;
+		$sql_message = $message;
+		$sql_food = $food;
+		$result = $sql->execute();
 	}
 
 	/**
@@ -59,13 +66,11 @@ class DBH {
 	**/
 	public function createConnection() {
 		$dbServername = "localhost";
-		$dbUsername = "root";
-		$dbPassword = "root";
 		$dbName = "loginsystem";
 
 		mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-		$this->conn = mysqli_connect($dbServername, $dbUsername, $dbPassword, $dbName);
+		$this->conn = mysqli_connect($dbServername, $this->dbUsername, $this->dbPassword, $dbName);
 		return $this->conn;
 	}
 
@@ -152,9 +157,14 @@ class DBH {
 	*@pwd - choosen password name entered by user
 	**/
 	public function storeUser($first, $last, $email, $uname, $pwd) {
-		$sql = "INSERT INTO users (user_first, user_last, user_email, user_uid, user_pwd) VALUES ('$first', '$last', '$email', '$uname', '$pwd');";
-		$queryresult = mysqli_query($this->conn, $sql);
-		return $queryresult;
+		$sql = $this->conn->prepare ("INSERT INTO users (user_first, user_last, user_email, user_uid, user_pwd) VALUES (?, ?, ?, ?, ?);");
+		$sql->bind_param ("sssss", $sql_first, $sql_last, $sql_email, $sql_uname, $sql_pwd);
+		$sql_first = $first;
+		$sql_last = $last;
+		$sql_email = $email;
+		$sql_uname = $uname;
+		$sql_pwd = $pwd;
+		return $sql->execute();
 	}
 
 	/**
@@ -163,7 +173,10 @@ class DBH {
 	*@user - name of the user who posted the comment to be removed
 	**/
 	public function deleteComment ($date, $user) {
-		$sql = "DELETE FROM comments WHERE user_uid = '".$user."' AND date = '".$date."'";
- 		$this->conn->query($sql);
+		$sql = $this->conn->prepare ("DELETE FROM comments WHERE user_uid = ? AND date = ?");
+		$sql->bind_param ("ss", $sql_user, $sql_date);
+		$sql_user = $user;
+		$sql_date = $date;
+ 		$sql->execute();
 	}
 }

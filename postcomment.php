@@ -13,6 +13,13 @@ if(empty($_POST['message'])){
 	$message = "";
 } else {
 	$message = $_POST['message'];
+	if (!ctype_print($message)) {
+		$contrl = Controller::getController();
+		$contrl->killSession();
+		header("Location: View/test.php");
+	} else {
+		continue;
+	}
 }
 
 

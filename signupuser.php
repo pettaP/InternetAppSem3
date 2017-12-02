@@ -19,24 +19,31 @@
 		header("Location: View/signup.php?signup=empty");
 		exit();
 	} else {
+
+		if( ctype_print($first) || ctype_print($last) || ctype_print($email) || ctype_print($uname) || ctype_print($pwd)){
+
 		$contrl = Controller::getController();
 		$result = $contrl->signUpNewUser($first, $last, $email, $uname, $pwd);
-	}
+		switch ($result) {
+				case 'invalid':
+					header("Location: View/signup.php?signup=invalid");
+					break;
+				case 'email':
+					header("Location: View/signup.php?signup=email");
+					break;
+				case 'usertaken':
+					header("Location: View/signup.php?signup=usertaken");
+					break;
+				case 'error':
+					header("Location: View/signup.php?signup=error");
+					break;
+				case 'success':
+					header("Location: View/signup.php?signup=success");
+					break;
+				}
+		} else {
 
-	switch ($result) {
-		case 'invalid':
-			header("Location: View/signup.php?signup=invalid");
-			break;
-		case 'email':
-			header("Location: View/signup.php?signup=email");
-			break;
-		case 'usertaken':
-			header("Location: View/signup.php?signup=usertaken");
-			break;
-		case 'error':
 			header("Location: View/signup.php?signup=error");
-			break;
-		case 'success':
-			header("Location: View/signup.php?signup=success");
-			break;
-	}
+			}
+		}
+	
