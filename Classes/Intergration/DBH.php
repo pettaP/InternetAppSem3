@@ -50,14 +50,13 @@ class DBH {
 	*@message - the maessage posted by user
 	*@conn - the connection to the database
 	**/
-	public function saveComment($u_uid, $food, $message, $conn){
-		$date = Date::getDate();
+	public function saveComment($comment, $conn){
 		$sql = $conn->prepare ("INSERT INTO comments (user_uid, date, message, food) VALUES (?, ?, ?, ?)");
 		$sql->bind_param ("ssss", $sql_u_uid, $sql_date, $sql_message, $sql_food);
-		$sql_u_uid = $u_uid;
-		$sql_date = $date;
-		$sql_message = $message;
-		$sql_food = $food;
+		$sql_u_uid = $comment-> getUserId();
+		$sql_date = $comment-> getDate();
+		$sql_message = $comment-> getUserComment();
+		$sql_food = $$comment-> getFood();
 		$result = $sql->execute();
 	}
 

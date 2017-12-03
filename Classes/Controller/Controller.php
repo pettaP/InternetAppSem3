@@ -7,6 +7,7 @@ use Model\Comments;
 use Model\User;
 use Model\Hashing;
 use Model\SignUpUser;
+use Model\Date;
 
 class Controller {
 
@@ -55,7 +56,9 @@ class Controller {
 	*@message - the textmessage posted by user
 	**/
 	public function postComment($u_uid, $food, $message){
-		$this->DBH->saveComment($u_uid, $food, $message, $this->conn);
+		$date = Date::getDate();
+		$comment = new Comment ($u_uid, $date, $food, $message);
+		$this->DBH->saveComment($comment, $this->conn);
 	}
 
 	/**
